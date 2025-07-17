@@ -19,7 +19,19 @@ RUN apt update && apt install -y less \
   iproute2 \
   dnsutils \
   aggregate \
-  jq
+  jq \
+  python3 \
+  python3-pip \
+  python3-venv \
+  python3-dev \
+  curl
+
+# Install Poetry
+ENV POETRY_HOME=/opt/poetry
+ENV PATH="$POETRY_HOME/bin:$PATH"
+RUN curl -sSL https://install.python-poetry.org | python3 - && \
+    poetry config virtualenvs.in-project true && \
+    chmod -R 755 $POETRY_HOME
 
 # Ensure default node user has access to /usr/local/share
 RUN mkdir -p /usr/local/share/npm-global && \
@@ -52,7 +64,7 @@ USER node
 
 # Install global packages
 ENV NPM_CONFIG_PREFIX=/usr/local/share/npm-global
-ENV PATH=$PATH:/usr/local/share/npm-global/bin
+ENV PATH=$PATH:/usr/local/share/npm-global/bin:/opt/poetry/bin
 
 # Set the default shell to zsh rather than sh
 ENV SHELL=/bin/zsh
